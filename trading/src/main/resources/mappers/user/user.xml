@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+	<select id="list" resultType="com.example.trading.model.user.UserDTO">
+		select * from user order by name
+	</select>
+	<insert id="insert">
+		insert into user (userid, passwd, name, age, phone, email) values(#{userid}, HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), #{name}, #{age}, #{phone}, #{email})
+	</insert>
+	<select id="detail" resultType="com.example.trading.model.user.UserDTO">
+		select userid, name, age, phone, email, join_date from user where userid = #{userid}
+	</select>
+	<update id="update">
+		update user set passwd = HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), name = #{name}, age = #{age}, phone = #{phone}, email = #{email} where userid = #{userid}
+	</update>
+	<update id="update_no_passwd">
+		update user set name = #{name}, age = #{age}, phone = #{phone}, email = #{email} where userid = #{userid}
+	</update>
+	<delete id="delete">
+		delete from user where userid = #{userid}
+	</delete>
+	<select id="login" resultType="String">
+		select name from user where userid=#{userid} and passwd=HEX(AES_ENCRYPT(#{passwd},MD5('bigdata')))
+	</select>
+	<select id="check_passwd" resultType="int">
+		select count(*) from user where userid=#{userid} and passwd=HEX(AES_ENCRYPT(#{passwd},MD5('bigdata')))
+	</select>
+</mapper>
