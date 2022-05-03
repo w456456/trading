@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<select id="list_attach" resultType="String">
+		select file_name from attach
+			where board_idx = ${board_idx}
+			order by regdate
+	</select>
+	<delete id="delete_attach">
+		delete from attach where file_name = #{file_name}
+	</delete>
+	<delete id="delete_attach_board">
+		delete from attach where board_idx = #{num}
+	</delete>
+	<insert id="insert">
+		insert into board (title,cont,userid) values
+			(#{title},#{cont},#{userid})
+	</insert>
+	<insert id="insert_attach">
+		insert into attach (file_name,board_idx) values  
+			(#{file_name},(SELECT IFNULL(MAX(num),0) FROM board));
+	</insert>
+	<insert id="update_attach">
+		insert into attach (file_name,board_idx) values
+			(#{file_name},${num})
+	</insert>
+	<select id="count" resultType="int">
+		select count(*) from board b inner join user u
+		<include refid="search" />
+	</select>
+	<select id="list" resultType="com.example.trading.model.board.BoardDTO">
+		select num,title,cont,b.reg_date,cnt,name,
+				(select count(*) from reply where board_idx = b.num) cnt2
+		from board b inner join user u
+		<include refid="search" />
+		order by num desc, reg_date     
+		LIMIT ${start-1}, ${end-start+1}
+	</select>
+	<select id="detail" resultType="com.example.trading.model.board.BoardDTO">
+		select num,title,cont,b.reg_date,cnt,name,u.userid
+		  from board b inner join user u
+		  where b.userid = u.userid and num = ${num}
+	</select>
+	<update id="increase_hit">
+		update board set cnt=cnt+1 where num = ${num}
+	</update>
+	<update id="update">
+		update board set title=#{title}, cont = #{cont}
+		  where num = ${num}
+	</update>
+	<delete id="delete">
+		delete from board where num = ${num}
+	</delete>
+	<sql id="search">
+		<choose>
+			<when test="search_option == 'all' ">
+				where b.userid = u.userid and
+				  				( name LIKE concat(concat('%',#{keyword}),'%')
+				  					or cont LIKE concat(concat('%',#{keyword}),'%')
+									or title LIKE concat(concat('%',#{keyword}),'%') 
+								)
+			</when>
+			<otherwise>
+				where b.userid = u.userid and
+						${search_option} like concat(concat('%',#{keyword}),'%')
+			</otherwise>
+		</choose>
+	</sql>
+</mapper>
