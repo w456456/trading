@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin">
+	<select id="list" resultType="com.example.trading.model.admin.AdminDTO">
+		select * from admin order by name
+	</select>
+	<insert id="insert">
+		insert into admin (adminid, passwd, name, level, phone, email) values(#{adminid}, HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), #{name}, #{level}, #{phone}, #{email})
+	</insert>
+	<select id="detail" resultType="com.example.trading.model.admin.AdminDTO">
+		select adminid, name, level, phone, email, join_date from admin where adminid = #{adminid}
+	</select>
+	<update id="update">
+		update admin set passwd = HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), name = #{name}, level = #{level}, phone = #{phone}, email = #{email} where adminid = #{adminid}
+	</update>
+	<update id="update_no_passwd">
+		update admin set name = #{name}, level = #{level}, phone = #{phone}, email = #{email} where adminid = #{adminid}
+	</update>
+	<delete id="delete">
+		delete from admin where adminid = #{adminid}
+	</delete>
+	<select id="login" resultType="String">
+		select name from admin where adminid=#{adminid} and passwd=HEX(AES_ENCRYPT(#{passwd},MD5('bigdata')))
+	</select>
+	<select id="check_passwd" resultType="int">
+		select count(*) from admin where adminid=#{adminid} and passwd=HEX(AES_ENCRYPT(#{passwd},MD5('bigdata')))
+	</select>
+</mapper>

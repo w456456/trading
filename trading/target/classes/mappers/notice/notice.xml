@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	<insert id="insert">
+		insert into notice (title,cont,adminid) values
+			(#{title},#{cont},#{adminid})
+	</insert>
+	<select id="count" resultType="int">
+		select count(*) from notice n inner join admin a
+		<include refid="search" />
+	</select>
+	<select id="list" resultType="com.example.trading.model.notice.NoticeDTO">
+		select num,title,cont,n.reg_date,cnt,name
+		from notice n inner join admin a
+		<include refid="search" />
+		order by num desc, n.reg_date     
+		LIMIT ${start-1}, ${end-start+1}
+	</select>
+	<select id="detail" resultType="com.example.trading.model.notice.NoticeDTO">
+		select num,title,cont,n.reg_date,cnt,name,a.adminid
+		  from notice n inner join admin a
+		  where n.adminid = a.adminid and num = ${num}
+	</select>
+	<update id="increase_hit">
+		update notice set cnt=cnt+1 where num = ${num}
+	</update>
+	<update id="update">
+		update notice set title=#{title}, cont=#{cont}
+		  where num = ${num}
+	</update>
+	<delete id="delete">
+		delete from notice where num = ${num}
+	</delete>
+	<sql id="search">
+		<choose>
+			<when test="search_option == 'all' ">
+				where n.adminid = a.adminid and
+				  				( name LIKE concat(concat('%',#{keyword}),'%')
+				  					or cont LIKE concat(concat('%',#{keyword}),'%')
+									or title LIKE concat(concat('%',#{keyword}),'%') 
+								)
+			</when>
+			<otherwise>
+				where n.adminid = a.adminid and
+						${search_option} like concat(concat('%',#{keyword}),'%')
+			</otherwise>
+		</choose>
+	</sql>
+</mapper>

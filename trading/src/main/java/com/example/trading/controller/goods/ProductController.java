@@ -34,6 +34,7 @@ public class ProductController {
 				
 				//배포경로 지정
 				String path = application.getRealPath("/WEB-INF/views/images/");
+				System.out.println(path);
 				new File(path).mkdir();
 				dto.getFile1().transferTo(new File(path+filename));
 			} catch (Exception e) {

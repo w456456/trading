@@ -5,16 +5,16 @@
 		select * from user order by name
 	</select>
 	<insert id="insert">
-		insert into user (userid, passwd, name, age, phone, email) values(#{userid}, HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), #{name}, #{age}, #{phone}, #{email})
+		insert into user (userid, passwd, name, phone, email) values(#{userid}, HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), #{name}, #{phone}, #{email})
 	</insert>
 	<select id="detail" resultType="com.example.trading.model.user.UserDTO">
-		select userid, name, age, phone, email, join_date from user where userid = #{userid}
+		select userid, name, phone, email, join_date from user where userid = #{userid}
 	</select>
 	<update id="update">
-		update user set passwd = HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), name = #{name}, age = #{age}, phone = #{phone}, email = #{email} where userid = #{userid}
+		update user set passwd = HEX(AES_ENCRYPT(#{passwd},MD5('bigdata'))), name = #{name}, phone = #{phone}, email = #{email} where userid = #{userid}
 	</update>
 	<update id="update_no_passwd">
-		update user set name = #{name}, age = #{age}, phone = #{phone}, email = #{email} where userid = #{userid}
+		update user set name = #{name}, phone = #{phone}, email = #{email} where userid = #{userid}
 	</update>
 	<delete id="delete">
 		delete from user where userid = #{userid}

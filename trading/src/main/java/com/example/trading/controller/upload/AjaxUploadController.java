@@ -27,7 +27,7 @@ public class AjaxUploadController {
 	BoardService boardService;
 	
 	//@Resource(name = "upload_path")   //servlet-context에 정의된 bean
-	String upload_path = "c:/upload";
+	String upload_path = "d:/study/upload";
 	
 	@RequestMapping("/upload/ajax_form")
 	public String upload_form() {

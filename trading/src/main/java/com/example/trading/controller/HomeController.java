@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class HomeController {
 	@RequestMapping("/")
 	public ModelAndView home(ModelAndView mav) {
-		mav.setViewName("home");
+		mav.setViewName("main");
 		mav.addObject("message", "스프링 부트 애플리케이션");
 		return mav;
 	}
